@@ -14,7 +14,7 @@ app = FastAPI(title="LangGraph SQL Agent API")
 
 # ---------- Hard limit setup ----------
 USAGE_LOG = "/tmp/openai_usage.json"
-DAILY_LIMIT = 1  # max requests per day
+DAILY_LIMIT = 50  # max requests per day
 
 def check_limit():
     today = time.strftime("%Y-%m-%d")
