@@ -6,20 +6,28 @@ import os
 from urllib.parse import quote_plus
 
 
-# ---------- Config ----------
-DB_USER = "postgres"
-DB_PASS = "p@55w0rd"     # replace with env var or Secrets Manager
-DB_HOST = "localhost"
-DB_PORT = 5432
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+DB_CONFIG = {
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST"),
+    "port": os.getenv("DB_PORT"),
+}
 
 OPENAI_KEY_ENV = "KEY_FOR_OPENAI_LEARNING_LANGCHAIN"
 
 # ---------- Helper: create agent dynamically ----------
 def create_sql_agent(db_name: str):
     # Encode password safely for connection string
-    encoded_pwd = quote_plus(DB_PASS)
+    encoded_pwd = quote_plus(DB_CONFIG["password"])
     """Creates a LangGraph SQL agent for a given Postgres database."""
-    db_uri = f"postgresql+psycopg2://{DB_USER}:{encoded_pwd}@{DB_HOST}:{DB_PORT}/{db_name}"
+    db_uri = f"postgresql+psycopg2://{DB_CONFIG['user']}:{encoded_pwd}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
     db = SQLDatabase.from_uri(db_uri)
 
     os.environ["OPENAI_API_KEY"] = os.getenv(OPENAI_KEY_ENV)
